@@ -188,3 +188,35 @@ td { color: #46556e; }
   color: #2d3c56;
   font-weight: 700;
 }
+
+
+/* Chat refresh button */
+.chat-heading {
+  align-items: center;
+}
+.chat-refresh-btn {
+  flex: 0 0 auto;
+  padding: 9px 13px;
+  border: 1px solid #dce5fb;
+  border-radius: 8px;
+  color: #315bdc;
+  background: #f1f5ff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+.chat-refresh-btn:hover:not(:disabled) {
+  border-color: #b9c9f7;
+  background: #e6edff;
+}
+.chat-refresh-btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+@media (max-width: 520px) {
+  .chat-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
