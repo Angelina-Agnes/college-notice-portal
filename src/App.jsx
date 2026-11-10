@@ -41,6 +41,7 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState("");
   const [chatText, setChatText] = useState("");
+  const [chatRefreshing, setChatRefreshing] = useState(false);
   const [authMode, setAuthMode] = useState("login");
   const [authForm, setAuthForm] = useState({ full_name: "", email: "", password: "" });
   const [noticeForm, setNoticeForm] = useState(emptyNotice);
@@ -484,6 +485,26 @@ function App() {
     );
   }
 
+  async function refreshChat() {
+    if (chatRefreshing) return;
+
+    setChatRefreshing(true);
+    try {
+      if (profile?.role === "admin") {
+        if (!selectedStudent) {
+          setMessages([]);
+          setMessage("Please select a student before refreshing the chat.");
+          return;
+        }
+        await loadAdminChat(selectedStudent);
+      } else if (profile?.role === "student") {
+        await loadStudentChat();
+      }
+    } finally {
+      setChatRefreshing(false);
+    }
+  }
+
   async function sendChat(event) {
     event.preventDefault();
     const text = chatText.trim();
@@ -681,7 +702,21 @@ function App() {
 
         {page === "chat" && (
           <section className="panel chat-panel">
-            <div className="section-heading"><div><h3>{isAdmin ? "Student support conversations" : "Student help desk"}</h3><p>{isAdmin ? "Choose a student to view and respond to their messages." : "Ask questions or send doubts to the administration."}</p></div></div>
+            <div className="section-heading chat-heading">
+              <div>
+                <h3>{isAdmin ? "Student support conversations" : "Student help desk"}</h3>
+                <p>{isAdmin ? "Choose a student to view and respond to their messages." : "Ask questions or send doubts to the administration."}</p>
+              </div>
+              <button
+                type="button"
+                className="chat-refresh-btn"
+                onClick={refreshChat}
+                disabled={chatRefreshing || (isAdmin && !selectedStudent)}
+                title="Refresh messages without reloading the website"
+              >
+                {chatRefreshing ? "Refreshing…" : "↻ Refresh chat"}
+              </button>
+            </div>
             {isAdmin && (
               <div className="chat-student-picker">
                 <label className="student-select">Select student
